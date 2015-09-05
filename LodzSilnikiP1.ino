@@ -1,5 +1,6 @@
 /*
 	Kamil Mankowski / 2015
+	v1.0-komendy
 */
 #define STOP 0
 #define QUARTER_SPEED 64
