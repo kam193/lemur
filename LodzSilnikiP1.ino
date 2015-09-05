@@ -1,45 +1,46 @@
 /*
 	Kamil Mankowski / 2015
 */
+#define STOP 0
+#define QUARTER_SPEED 64
+#define HALF_SPEED 128
+#define THREE4_SPEED 192
+#define FULL_SPEED 255
+
+#define UP true
+#define DOWN false
+
+#define FRONT true
+#define BACK false
+
 void stopMotor(int no);
-void stopAllMotors();
 void setMotor(int no, int speed, boolean r);
 void testAllMotors();
 
-//Zestawy zadan
-void PionNaMaxaG();
-void Silnik1Max();
+void stopAllMotors();
+void setLeftPositionMotors(int speed, boolean r = UP);
+void setRightPositionMotors(int speed, boolean r = UP);
+void setDriveMotors(int speed, boolean r_right = FRONT, boolean r_left = FRONT);
 
-//Komunikacja
 void preprocess(int cmmd);
 void Receive();
 
-int enablePins[6]; // !PWM
-int in1Pins[6];
-int in2Pins[6];
+int enablePins[6] = { 3, 5, 6, 9, 10, 11 }; // PWM
+int in1Pins[6] = { 2, 4, 7, 8, 12, 13 };
+int in2Pins[6] = { 19, 18, 17, 16, 15, 14 };
 
-int motorCount = 2;
+int motorCount = 6;
 
 int stan = -1;
 
 void setup()
 {
-	enablePins[0] = 11;
-	in1Pins[0] = 9;
-	in2Pins[0] = 10;
-
-	enablePins[1] = 6;
-	in1Pins[1] = 7;
-	in2Pins[1] = 8;
-
 	for (int i = 0; i < motorCount; i++)
 	{
 		pinMode(enablePins[i], OUTPUT);
 		pinMode(in1Pins[i], OUTPUT);
 		pinMode(in2Pins[i], OUTPUT);
 	}
-
-	pinMode(13, OUTPUT);
 
 	stopAllMotors();
 
@@ -48,11 +49,6 @@ void setup()
 
 void loop()
 {
-	/*testAllMotors();
-	digitalWrite(13, HIGH);
-	delay(3000);
-	digitalWrite(13, LOW);*/
-
 	Receive();
 }
 
@@ -66,51 +62,30 @@ void Receive(){
 }
 
 void preprocess(int cmmd){
-	// Miejsce na tresc funkcji 
-	// przetwrzajacej otrzymane komendy
+	char code = '0';
 
-	if (cmmd == 48) //0
+	if (cmmd >= 0 && cmmd <= 255)
+		code = cmmd;
+	
+	
+
+	if (code == 'F')
 	{
-		stan = -1;
-		stopAllMotors();
-		stan = 0;
-	}
-	else if (cmmd == 49) //1
-	{
-		stan = -1;
 		testAllMotors();
+	}
+	if (cmmd == 48) //0 - STOP
+	{
+		stan = -1;
 		stopAllMotors();
 		stan = 0;
 	}
-	else if (cmmd == 50) //2
-	{
-		stan = -1;
-		stopAllMotors();
-		PionNaMaxaG();
-		stan = 2;
-	}
-	else if (cmmd == 51) //3
-	{
-		stan = -1;
-		stopAllMotors();
-		Silnik1Max();
-		stan = 3;
-	}
-	else if (cmmd == 57) //9
-	{
-		Serial.print(stan);
-	}
+	
+			//Serial.print(stan);
 }
 
 void stopMotor(int no)
 {
-	digitalWrite(enablePins[no], LOW);
-}
-
-void stopAllMotors()
-{
-	for (int i = 0; i < motorCount; i++)
-		stopMotor(i);
+	digitalWrite(enablePins[no], STOP);
 }
 
 void setMotor(int no, int speed, boolean r)
@@ -122,47 +97,66 @@ void setMotor(int no, int speed, boolean r)
 
 void testAllMotors()
 {
-	stan = 1;
-	//wszystkie stop
+	for (int i = 0; i < motorCount; i++)
+		setMotor(i, FULL_SPEED, true);
+
+	delay(3000);
+
 	stopAllMotors();
-	delay(100);
+	delay(1000);
 
-	//wszystkie max
 	for (int i = 0; i < motorCount; i++)
-		setMotor(i, 255, true);
+		setMotor(i, FULL_SPEED, false);
 
-	delay(2000);
+	delay(3000);
 
-	//wszystkie max w drug¹ stronê
-	for (int i = 0; i < motorCount; i++)
-		setMotor(i, 255, false);
-
-	delay(2000);
-
-	//wszystkie polowa
-	for (int i = 0; i < motorCount; i++)
-		setMotor(i, 128, true);
-
-	delay(2000);
-
-	//kazdy po kolei max
 	stopAllMotors();
+}
+
+void stopAllMotors()
+{
 	for (int i = 0; i < motorCount; i++)
-	{
-		setMotor(i, 255, true);
-		delay(1000);
 		stopMotor(i);
-		delay(1000);
+}
+
+void setLeftPositionMotors(int speed, boolean r = UP)
+{
+	if (speed == STOP)
+	{
+		stopMotor(3);
+		stopMotor(5);
+	}
+	else
+	{
+		setMotor(3, speed, r);
+		setMotor(5, speed, r);
 	}
 }
 
-void PionNaMaxaG()
+void setRightPositionMotors(int speed, boolean r = UP)
 {
-	setMotor(0, 255, true);
-	setMotor(1, 255, true);
+	if (speed == STOP)
+	{
+		stopMotor(2);
+		stopMotor(4);
+	}
+	else
+	{
+		setMotor(2, speed, r);
+		setMotor(4, speed, r);
+	}
 }
 
-void Silnik1Max()
+void setDriveMotors(int speed, boolean r_right = FRONT, boolean r_left = FRONT)
 {
-	setMotor(1, 255, true);
+	if (speed == STOP)
+	{
+		stopMotor(0);
+		stopMotor(1);
+	}
+	else
+	{
+		setMotor(0, speed, r_right);
+		setMotor(1, speed, r_left);
+	}
 }
