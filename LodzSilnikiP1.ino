@@ -31,7 +31,7 @@ int in2Pins[6] = { 19, 18, 17, 16, 15, 14 };
 
 int motorCount = 6;
 
-int stan = -1;
+char stan = '0';
 
 void setup()
 {
@@ -67,20 +67,159 @@ void preprocess(int cmmd){
 	if (cmmd >= 0 && cmmd <= 255)
 		code = cmmd;
 	
-	
-
-	if (code == 'F')
+	if (code == '0')
+	{
+		stopAllMotors();
+		stan = '0';
+	}
+	else if (code == '1')
+	{
+		setLeftPositionMotors(FULL_SPEED, UP);
+		setRightPositionMotors(FULL_SPEED, UP);
+		stan = '1';
+	}
+	else if (code == '2')
+	{
+		setLeftPositionMotors(THREE4_SPEED, UP);
+		setRightPositionMotors(THREE4_SPEED, UP);
+		stan = '2';
+	}
+	else if (code == '3')
+	{
+		setLeftPositionMotors(HALF_SPEED, UP);
+		setRightPositionMotors(HALF_SPEED, UP);
+		stan = '3';
+	}
+	else if (code == '4')
+	{
+		setLeftPositionMotors(QUARTER_SPEED, UP);
+		setRightPositionMotors(QUARTER_SPEED, UP);
+		stan = '4';
+	}
+	else if (code == '5')
+	{
+		setLeftPositionMotors(FULL_SPEED, DOWN);
+		setRightPositionMotors(FULL_SPEED, DOWN);
+		stan = '5';
+	}
+	else if (code == '6')
+	{
+		setLeftPositionMotors(THREE4_SPEED, DOWN);
+		setRightPositionMotors(THREE4_SPEED, DOWN);
+		stan = '6';
+	}
+	else if (code == '7')
+	{
+		setLeftPositionMotors(HALF_SPEED, DOWN);
+		setRightPositionMotors(HALF_SPEED, DOWN);
+		stan = '7';
+	}
+	else if (code == '8')
+	{
+		setLeftPositionMotors(QUARTER_SPEED, DOWN);
+		setRightPositionMotors(QUARTER_SPEED, DOWN);
+		stan = '8';
+	}
+	else if (code == '9')
+	{
+		setLeftPositionMotors(STOP);
+		setRightPositionMotors(STOP);
+		stan = '9';
+	}
+	else if (code == 'a')
+	{
+		setDriveMotors(FULL_SPEED, FRONT, FRONT);
+		stan = 'a';
+	}
+	else if (code == 'b')
+	{
+		setDriveMotors(THREE4_SPEED, FRONT, FRONT);
+		stan = 'b';
+	}
+	else if (code == 'c')
+	{
+		setDriveMotors(HALF_SPEED, FRONT, FRONT);
+		stan = 'c';
+	}
+	else if (code == 'd')
+	{
+		setDriveMotors(QUARTER_SPEED, FRONT, FRONT);
+		stan = 'd';
+	}
+	else if (code == 'e')
+	{
+		setDriveMotors(FULL_SPEED, BACK, BACK);
+		stan = 'e';
+	}
+	else if (code == 'f')
+	{
+		setDriveMotors(THREE4_SPEED, BACK, BACK);
+		stan = 'f';
+	}
+	else if (code == 'g')
+	{
+		setDriveMotors(HALF_SPEED, BACK, BACK);
+		stan = 'g';
+	}
+	else if (code == 'h')
+	{
+		setDriveMotors(QUARTER_SPEED, BACK, BACK);
+		stan = 'h';
+	}
+	else if (code == 'i')
+	{
+		setDriveMotors(FULL_SPEED, BACK, FRONT);
+		stan = 'i';
+	}
+	else if (code == 'j')
+	{
+		setDriveMotors(THREE4_SPEED, BACK, FRONT);
+		stan = 'j';
+	}
+	else if (code == 'k')
+	{
+		setDriveMotors(HALF_SPEED, BACK, FRONT);
+		stan = 'k';
+	}
+	else if (code == 'l')
+	{
+		setDriveMotors(QUARTER_SPEED, BACK, FRONT);
+		stan = 'l';
+	}
+	else if (code == 'm')
+	{
+		setDriveMotors(FULL_SPEED, FRONT, BACK);
+		stan = 'm';
+	}
+	else if (code == 'n')
+	{
+		setDriveMotors(THREE4_SPEED, FRONT, BACK);
+		stan = 'n';
+	}
+	else if (code == 'o')
+	{
+		setDriveMotors(HALF_SPEED, FRONT, BACK);
+		stan = 'o';
+	}
+	else if (code == 'p')
+	{
+		setDriveMotors(QUARTER_SPEED, FRONT, BACK);
+		stan = 'p';
+	}
+	else if (code == 'r')
+	{
+		setDriveMotors(STOP);
+		stan = 'r';
+	}
+	else if (code == 's')
+	{
+		Serial.print(stan);
+	}
+	else if (code == 't')
 	{
 		testAllMotors();
+		stan = 't';
 	}
-	if (cmmd == 48) //0 - STOP
-	{
-		stan = -1;
-		stopAllMotors();
-		stan = 0;
-	}
-	
-			//Serial.print(stan);
 }
 
 void stopMotor(int no)
@@ -119,7 +258,7 @@ void stopAllMotors()
 		stopMotor(i);
 }
 
-void setLeftPositionMotors(int speed, boolean r = UP)
+void setLeftPositionMotors(int speed, boolean r)
 {
 	if (speed == STOP)
 	{
@@ -133,7 +272,7 @@ void setLeftPositionMotors(int speed, boolean r = UP)
 	}
 }
 
-void setRightPositionMotors(int speed, boolean r = UP)
+void setRightPositionMotors(int speed, boolean r)
 {
 	if (speed == STOP)
 	{
@@ -147,7 +286,7 @@ void setRightPositionMotors(int speed, boolean r = UP)
 	}
 }
 
-void setDriveMotors(int speed, boolean r_right = FRONT, boolean r_left = FRONT)
+void setDriveMotors(int speed, boolean r_right, boolean r_left)
 {
 	if (speed == STOP)
 	{
